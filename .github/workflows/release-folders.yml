@@ -1,0 +1,71 @@
+# Copyright (c) 2024, 2026, Oracle and/or its affiliates. All rights reserved.
+# The Universal Permissive License (UPL), Version 1.0 as shown at https://oss.oracle.com/licenses/upl/
+
+name: Release per Top-Level Folder (create or update)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release-folders:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed top-level directories
+        run: |
+          # Detect added OR modified files
+          git diff --name-status ${{ github.event.before }} ${{ github.sha }} \
+            | awk '$1=="A" || $1=="M"{print $2}' \
+            | awk -F/ 'NF>1{print $1}' \
+            | grep -v '^\.' \
+            | sort -u > changed_dirs.txt
+          echo "Changed top-level directories:"
+          cat changed_dirs.txt || true
+      - name: Zip changed directories
+        run: |
+          mkdir -p zips
+          while read dir; do
+            if [ -d "$dir" ]; then
+              echo "Zipping $dir"
+              zip -r "zips/${dir}.zip" "$dir"
+            fi
+          done < changed_dirs.txt
+      - name: Create or Replace Releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          
+          while read dir; do
+            if [ -f "zips/${dir}.zip" ]; then
+              echo "Processing release for $dir"
+              # Delete release if exists
+              if gh release view "$dir" >/dev/null 2>&1; then
+                echo "Release exists. Deleting..."
+                gh release delete "$dir" -y
+                echo "release deleted at this step"
+                git push origin --delete "$dir" || true
+                
+                echo "here runs push delete"
+                git tag -d "$dir" || true
+                echo "tag deleted"
+                
+              fi
+         
+              # Create new release
+              gh release create "$dir" \
+                "zips/${dir}.zip" \
+                --title "$dir" \
+                --notes "Auto-updated release for folder $dir" \
+                --target "${{ github.sha }}"
+            fi
+          done < changed_dirs.txt
