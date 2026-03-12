@@ -1,3 +1,6 @@
+# Copyright (c) 2024, 2026, Oracle and/or its affiliates. All rights reserved.
+# The Universal Permissive License (UPL), Version 1.0 as shown at https://oss.oracle.com/licenses/upl/
+
 locals {
   vcns              = [for vcn in var.vcn_params : split("/", vcn.vcn_cidr)[1] < 16 || split("/", vcn.vcn_cidr)[1] > 30 ? file(format("\n\nERROR: The VCN Cidr %s for VCN %s is not between /16 and /30", vcn.vcn_cidr, vcn.display_name)) : null]
   subnets           = [for subnet in var.subnet_params : split("/", subnet.cidr_block)[1] < 16 || split("/", subnet.cidr_block)[1] > 30 ? file(format("\n\nERROR: The Subnet Cidr %s for Subnet %s is not between /16 and /30", subnet.cidr_block, subnet.display_name)) : null]
