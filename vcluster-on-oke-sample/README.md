@@ -57,7 +57,7 @@ Using virtual clusters greatly improves the efficiency of resource usage, simpli
    ```
    kubectl get nodes
    ```
-**Note:** If kubectl hangs, logout and re-login after a couple of minutes, to allow cloud-init to finish
+**Note:** If kubectl hangs, logout and re-login after a couple of minutes, to allow cloud-init to finish.
 
 ## Task 3: Create your first vCluster
 
