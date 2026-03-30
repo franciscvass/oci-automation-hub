@@ -46,10 +46,6 @@ Designed for multi-cloud and hybrid cloud use cases, Karmada provides turnkey au
 
 1. Download the terraform files from github.
 
-   ```
-   # git clone https://github.com/dinudaniel/karmada-on-oke.git
-   ```
-
 2. Use Oracle Resource Manager to create and apply the stack
 
   - using the hamburger menu, go to Oracle Resource Manager
@@ -156,6 +152,3 @@ karmadactl --kubeconfig /root/.kube/config deinit
 - Select the stack you created
 - click `Destroy`
 
-## Acknowledgments
-
-- **Author** - Daniel Dinu (Principal Cloud Engineer)
