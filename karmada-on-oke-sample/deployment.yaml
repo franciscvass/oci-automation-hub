@@ -18,5 +18,5 @@ spec:
         app: nginx
     spec:
       containers:
-      - image: nginx
+      - image: docker.io/nginx
         name: nginx
