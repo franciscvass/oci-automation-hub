@@ -20,6 +20,8 @@ def main() -> int:
         str(app_path),
         "--server.address",
         "127.0.0.1",
+        "--browser.gatherUsageStats",
+        "false",
     ]
     return subprocess.call(command)
 
